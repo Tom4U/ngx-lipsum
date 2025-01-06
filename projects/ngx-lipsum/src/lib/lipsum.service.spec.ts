@@ -1,6 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { ILoremIpsumParams } from 'lorem-ipsum';
-
 import { LipsumService } from './lipsum.service';
 import { getTestParams } from './test-utils';
 
@@ -8,7 +6,9 @@ describe('LipsumService', () => {
   let service: LipsumService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [LipsumService],
+    });
     service = TestBed.inject(LipsumService);
   });
 
@@ -23,6 +23,7 @@ describe('LipsumService', () => {
 
   it('should get a lorem ipsum text with a custom configuration', () => {
     const { params, result } = getTestParams();
-    expect(service.get(params)).toEqual(result);
+    const serviceResult = service.get(params);
+    expect(serviceResult).toEqual(result);
   });
 });

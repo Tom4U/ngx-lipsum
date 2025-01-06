@@ -1,6 +1,14 @@
-import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import {
+  computed,
+  Directive,
+  ElementRef,
+  inject,
+  input,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { LipsumService } from './lipsum.service';
-import { ILoremIpsumParams, loremIpsum } from 'lorem-ipsum';
+import { ILoremIpsumParams } from 'lorem-ipsum';
 
 const SHORT_EL_DEFAULTS: ILoremIpsumParams = {
   units: 'words',
@@ -70,19 +78,19 @@ const CONFIG_MAP = new Map<string, ILoremIpsumParams>([
 
 @Directive({
   selector: '[lipsum]',
-  standalone: true,
+  providers: [LipsumService],
 })
 export class LipsumDirective implements OnInit {
-  @Input('lipsum') config?: ILoremIpsumParams = {};
+  config = input<ILoremIpsumParams>({}, { alias: 'lipsum' });
 
-  constructor(readonly el: ElementRef<any>, private renderer: Renderer2) {}
+  params = computed<ILoremIpsumParams>(() => ({
+    ...(CONFIG_MAP.get(this.el.nativeElement.localName) || {}),
+    ...this.config(),
+  }));
 
-  get params(): ILoremIpsumParams {
-    return {
-      ...(CONFIG_MAP.get(this.el.nativeElement.localName) || {}),
-      ...this.config,
-    };
-  }
+  private readonly service = inject(LipsumService);
+  private readonly el = inject(ElementRef<any>);
+  private readonly renderer = inject(Renderer2);
 
   ngOnInit() {
     const el = this.el.nativeElement;
@@ -98,13 +106,13 @@ export class LipsumDirective implements OnInit {
   private setLipsumForInputElements(
     ref: ElementRef<HTMLInputElement | HTMLTextAreaElement>,
   ) {
-    ref.nativeElement.value = loremIpsum(this.params);
+    ref.nativeElement.value = this.service.get(this.params());
   }
 
   private setLipsumForListElements(
     ref: ElementRef<HTMLOListElement | HTMLLIElement>,
   ) {
-    const paragraphs = loremIpsum(this.params).split('\n');
+    const paragraphs = this.service.get(this.params()).split('\n');
     paragraphs.forEach(p => {
       const liEl = this.renderer.createElement('li');
       liEl.innerText = p;
@@ -113,6 +121,6 @@ export class LipsumDirective implements OnInit {
   }
 
   private setLipsumForCommonElements(ref: ElementRef<HTMLElement>) {
-    ref.nativeElement.innerText = loremIpsum(this.params);
+    ref.nativeElement.innerText = this.service.get(this.params());
   }
 }

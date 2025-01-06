@@ -1,24 +1,27 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
-import { ILoremIpsumParams, loremIpsum } from 'lorem-ipsum';
+import { Component, inject, input, SimpleChanges } from '@angular/core';
+import { ILoremIpsumParams } from 'lorem-ipsum';
+import { LipsumService } from './lipsum.service';
 
 @Component({
   selector: 'ngx-lipsum',
   template: `<ng-container>{{ text }}</ng-container>`,
-  standalone: true,
 })
 export class NgxLipsumComponent {
-  @Input() config?: ILoremIpsumParams;
+  config = input<ILoremIpsumParams>();
+
+  private readonly service = inject(LipsumService);
 
   public text!: string;
+
   constructor() {
     this.setText();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(_changes: SimpleChanges) {
     this.setText();
   }
 
   private setText() {
-    this.text = loremIpsum(this.config);
+    this.text = this.service.get(this.config());
   }
 }

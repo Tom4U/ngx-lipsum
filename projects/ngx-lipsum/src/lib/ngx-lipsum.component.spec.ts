@@ -12,6 +12,7 @@ describe('NgxLipsumComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NgxLipsumComponent],
+      providers: [LipsumService],
     }).compileComponents();
     mockLipsumService = TestBed.inject(LipsumService);
     mockLipsumServiceSpy = jest
@@ -35,9 +36,12 @@ describe('NgxLipsumComponent', () => {
   });
 
   it('OnChanges: should set the text value by asking the LipsumService with a new custom config', () => {
-    component.config = {
+    fixture.componentRef.setInput('config', {
       count: 100,
-    };
+    });
+
+    fixture.detectChanges();
+
     component.ngOnChanges({
       config: {
         currentValue: {

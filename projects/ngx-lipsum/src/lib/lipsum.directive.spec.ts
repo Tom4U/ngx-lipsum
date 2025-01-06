@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -12,25 +12,21 @@ import { LipsumDirective } from './lipsum.directive';
     <ul [lipsum]></ul>
     <a [lipsum]></a>
   `,
-  standalone: true,
+  imports: [LipsumDirective],
 })
 class TestComponent {}
 
 describe('LipsumDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
-  let des: DebugElement[];
 
   beforeEach(() => {
-    fixture = TestBed.configureTestingModule({
-      imports: [LipsumDirective, TestComponent],
-    }).createComponent(TestComponent);
-    fixture.detectChanges(); // initial binding
+    fixture = TestBed.configureTestingModule({}).createComponent(TestComponent);
 
-    // all elements with an attached HighlightDirective
-    des = fixture.debugElement.queryAll(By.directive(LipsumDirective));
+    fixture.detectChanges();
   });
 
   it('should have five lipsum elements', () => {
+    const des = fixture.debugElement.queryAll(By.directive(LipsumDirective));
     expect(des.length).toBe(5);
   });
 });
