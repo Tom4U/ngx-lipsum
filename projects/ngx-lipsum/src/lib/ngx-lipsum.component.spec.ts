@@ -6,18 +6,25 @@ import { NgxLipsumComponent } from './ngx-lipsum.component';
 describe('NgxLipsumComponent', () => {
   let component: NgxLipsumComponent;
   let fixture: ComponentFixture<NgxLipsumComponent>;
-  let mockLipsumService: LipsumService;
-  let mockLipsumServiceSpy: jest.SpyInstance;
+
+  let serviceMock: jest.Mock<LipsumService>;
+  let spy: jest.SpyInstance;
 
   beforeEach(async () => {
+    jest.mock('./lipsum.service', () => ({
+      get: jest.fn(),
+    }));
+
+    serviceMock = LipsumService as jest.Mock<LipsumService>;
+
+    spy = jest
+      .spyOn(serviceMock.prototype, 'get')
+      .mockImplementation(() => 'mocked response');
+
     await TestBed.configureTestingModule({
       imports: [NgxLipsumComponent],
       providers: [LipsumService],
     }).compileComponents();
-    mockLipsumService = TestBed.inject(LipsumService);
-    mockLipsumServiceSpy = jest
-      .spyOn(mockLipsumService, 'get')
-      .mockReturnValue('mocked response');
   });
 
   beforeEach(() => {
@@ -31,7 +38,7 @@ describe('NgxLipsumComponent', () => {
   });
 
   it('OnInit: should set the text value by asking the LipsumService', () => {
-    expect(mockLipsumServiceSpy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(component.text).toEqual('mocked response');
   });
 
@@ -49,6 +56,6 @@ describe('NgxLipsumComponent', () => {
         },
       } as SimpleChange,
     });
-    expect(mockLipsumServiceSpy).toHaveBeenCalledWith({ count: 100 });
+    expect(spy).toHaveBeenCalledWith({ count: 100 });
   });
 });
