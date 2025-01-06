@@ -8,6 +8,7 @@ export const predictableLoremIpsumParams: ILoremIpsumParams = {
   sentenceUpperBound: 5, // Max. number of words per sentence.
   units: 'paragraphs', // paragraph(s), "sentence(s)", or "word(s)"
   words: ['foo'], // Array of words to draw from
+  suffix: '\n',
 };
 
 export const getTestParams = (
@@ -20,8 +21,6 @@ export const getTestParams = (
     },
     result: Object.keys(config).length
       ? ''
-      : `Foo foo foo foo foo. Foo foo foo foo foo.
-Foo foo foo foo foo. Foo foo foo foo foo.
-Foo foo foo foo foo. Foo foo foo foo foo.`,
+      : `Foo foo foo foo foo. Foo foo foo foo foo.\nFoo foo foo foo foo. Foo foo foo foo foo.\nFoo foo foo foo foo. Foo foo foo foo foo.`,
   };
 };
