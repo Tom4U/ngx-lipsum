@@ -1,4 +1,4 @@
-import { Component, inject, input, SimpleChanges } from '@angular/core';
+import { Component, inject, input, OnInit, SimpleChanges } from '@angular/core';
 import { ILoremIpsumParams } from 'lorem-ipsum';
 import { LipsumService } from './lipsum.service';
 
@@ -6,14 +6,14 @@ import { LipsumService } from './lipsum.service';
   selector: 'ngx-lipsum',
   template: `<ng-container>{{ text }}</ng-container>`,
 })
-export class NgxLipsumComponent {
+export class NgxLipsumComponent implements OnInit {
   config = input<ILoremIpsumParams>();
 
   private readonly service = inject(LipsumService);
 
   public text!: string;
 
-  constructor() {
+  ngOnInit() {
     this.setText();
   }
 
