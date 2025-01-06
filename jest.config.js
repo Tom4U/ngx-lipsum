@@ -1,7 +1,17 @@
+const setupFiles = [];
+
+const isJestTestRunner =
+  process.argv.length >= 2 && process.argv[1].endsWith('jest.js') === true;
+
+if (isJestTestRunner) {
+  console.log('Jest test runner detected');
+  setupFiles.push('<rootDir>/setup-jest.ts');
+} else {
+  console.log('Angular test runner detected');
+}
+
 module.exports = {
-  moduleNameMapper: {
-    '@core/(.*)': '<rootDir>/src/app/core/$1',
-  },
   preset: 'jest-preset-angular',
-  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  setupFilesAfterEnv: setupFiles,
+  detectOpenHandles: true,
 };
